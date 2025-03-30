@@ -53,7 +53,7 @@ jobs:
       run: dotnet restore
 
     - name: Build and Publish
-      run: dotnet publish --configuration Release --output ./publish
+      run: dotnet publish Sumapi/SumApi.csproj --configuration Release --output ./publish
 
     - name: Deploy to Azure Web App
       uses: azure/webapps-deploy@v2
