@@ -1,14 +1,44 @@
-name: .NET CI Pipeline
+name: sumapi-grupo5
 
+# Cuándo se ejecuta el pipeline
 on:
   push:
     branches: [ main ]
   pull_request:
     branches: [ main ]
 
+# Tareas a realizar
 jobs:
   build-and-test:
     runs-on: ubuntu-latest # Usa un runner con Ubuntu (también puedes usar windows-latest)
+
+    steps:
+    # 1. Descargar el código del repositorio
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    # 2. Configurar el entorno .NET
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v3
+      with:
+        dotnet-version: '8.0.x' # Ajusta a la versión de .NET que usas (8.0 en tu caso)
+
+    # 3. Restaurar dependencias
+    - name: Restore dependencies
+      run: dotnet restore
+
+    # 4. Compilar el proyecto
+    - name: Build
+      run: dotnet build --configuration Release --no-restore
+
+    # 5. Ejecutar pruebas unitarias
+    - name: Run Tests
+      run: dotnet test --no-build --verbosity normal
+
+  deploy:
+    needs: build-and-test # Solo se ejecuta si build-and-test pasa
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main' # Solo despliega en push a main, no en PRs
 
     steps:
     - name: Checkout code
@@ -22,8 +52,12 @@ jobs:
     - name: Restore dependencies
       run: dotnet restore
 
-    - name: Build
-      run: dotnet build --configuration Release --no-restore
+    - name: Build and Publish
+      run: dotnet publish --configuration Release --output ./publish
 
-    - name: Run Tests
-      run: dotnet test --no-build --verbosity normal
+    - name: Deploy to Azure Web App
+      uses: azure/webapps-deploy@v2
+      with:
+        app-name: 'sumapi-grupo5' # Nombre de la aplicación en Azure
+        publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
+        package: './publish'
