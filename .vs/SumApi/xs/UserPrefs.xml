@@ -1,0 +1,5 @@
+﻿<Properties StartupConfiguration="{4FE2EF79-FAF5-491E-82DD-C51C32FFDB0C}|https">
+  <MultiItemStartupConfigurations />
+  <MonoDevelop.Ide.ItemProperties.SumApi PreferredExecutionTarget="/Applications/Firefox.app" />
+  <MonoDevelop.Ide.ItemProperties.SumApi.Tests FirstBuild="True" />
+</Properties>
